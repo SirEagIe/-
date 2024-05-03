@@ -1,0 +1,11 @@
+{% extends "goods/base.html" %}
+
+{% block title %}Спасибо!{% endblock %}
+
+{% block content %}
+    <h1>Спасибо!</h1>
+    <p>Ваш заказ успешно оформлен. Номер вашего заказа
+        <strong>{{ order.id }}</strong>.</p>
+	<p>Ожидайте, когда продавец свяжется с вами по почте.</p>
+	<style>#content{margin-left:5px; margin-top:40px}</style>
+{% endblock %}

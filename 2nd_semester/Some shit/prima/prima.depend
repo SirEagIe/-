@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1588602732 source:d:\eagle\prima\main.c
+	<stdio.h>
+	<stdlib.h>
+

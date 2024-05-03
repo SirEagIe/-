@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}My shop{% endblock %}</title>
+	{% block head %}
+	{% endblock %}
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
+</head>
+<body>
+<nav>
+	<div class="logo">
+		<a href="/">Техномаркет</a>
+	</div>
+	<div class="cart">
+		{% with total_items=cart|length %}
+			{% if cart|length > 0 %}
+				Корзина:
+				<a href="{% url "cart:cart_detail" %}">
+					Товаров: {{ total_items }},
+					На сумму {{ cart.get_total_price }}р
+				</a>
+			{% else %}
+				Корзина пуста
+			{% endif %}
+		{% endwith %}
+	</div>
+</nav>
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

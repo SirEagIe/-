@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1588570835 source:d:\eagle\neorgraf\main.c
+	<stdio.h>
+	<stdlib.h>
+

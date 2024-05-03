@@ -1,0 +1,24 @@
+{% extends "goods/base.html" %}
+{% load static %}
+{% block title %}
+    {% if category %}{{ category.title }}{% else %}Products{% endif %}
+{% endblock %}
+{% block head %}
+    <link href="{% static "css/details.css" %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="product-detail">
+        <img style="width: 300px" src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+        <h1>{{ product.name }}</h1>
+        <h2><a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a></h2>
+        <p class="price">{{ product.price }}р</p>
+        {{ product.description|linebreaks }}
+    </div>
+	
+	<form action="{% url "cart:cart_add" product.id %}" method="post">
+		{{ cart_product_form }}
+		{% csrf_token %}
+		<input type="submit" value="В корзину">
+	</form>
+	<style>#content{margin-left:5px; margin-top:40px}</style>
+{% endblock %}

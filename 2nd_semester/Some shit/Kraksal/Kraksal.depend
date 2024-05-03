@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1588586401 source:d:\eagle\kraksal\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1588589090 source:d:\eagle\kraskal\main.c
+	<stdio.h>
+	<stdlib.h>
+

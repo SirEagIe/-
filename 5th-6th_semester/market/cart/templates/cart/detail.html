@@ -1,0 +1,60 @@
+{% extends "goods/base.html" %}
+{% load static %}
+{% block title %}
+    Ваша корзина
+{% endblock %}
+
+{% block content %}
+    <h1>Ваша корзина</h1>
+    <table class="cart-table">
+        <thead>
+        <tr>
+            <th>Фото</th>
+            <th>Название</th>
+            <th>Количество</th>
+            <th>Удалить</th>
+            <th>Цена</th>
+            <th>Общая цена</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in cart %}
+            {% with product=item.product %}
+                <tr>
+                    <td>
+                        <a href="{{ product.get_absolute_url }}">
+                            <div style="width:100px; height:100px; overflow: hidden;">
+								<img style="height:100px" src="
+                                {% if product.image %}
+                                    {{ product.image.url }}
+                                {% else %}
+                                    {% static "img/no_image.png" %}
+                                {% endif %}">
+							</div>
+                        </a>
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td><a href="{% url "cart:cart_remove" product.id%}">Удалить</a></td>
+                    <td class="num">{{ item.price }}р</td>
+                    <td class="num">{{ item.total_price }}р</td>
+                </tr>
+            {% endwith %}
+        {% endfor %}
+        <tr class="total">
+            <td>Итого</td>
+            <td colspan="4"></td>
+            <td class="num">{{ cart.get_total_price }}р</td>
+        </tr>
+        </tbody>
+    </table>
+    <p class="text-right">
+        <a href="{% url "goods:product_list" %}" class="button light">Продолжить покупки</a>
+        <a href="{% url "orders:order_create" %}" class="button">
+			Оформить заказ
+		</a>
+    </p>
+	<style>#content{margin-left:5px; margin-top:40px;}
+	th {padding-right:20px}
+	td {padding-right:20px}</style>
+{% endblock %}

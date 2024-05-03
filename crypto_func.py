@@ -100,10 +100,14 @@ def sum_curve(curve, point1, point2):
     return point3
     
 def mult_curve(curve, point, n):
+    s = 1
+    if n < 0:
+        n *= -1
+        s = -1
     result_point = point
     for i in range(n - 1):
         result_point = sum_curve(curve, result_point, point)
-        print(result_point)
+    result_point = (result_point[0], s * result_point[1] % curve[0])
     return result_point
 
 def quick_mult_curve(curve, point, n):

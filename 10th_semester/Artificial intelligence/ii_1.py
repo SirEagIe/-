@@ -1,19 +1,23 @@
-import random, math
+import random
+import math
 import matplotlib.pyplot as plt
 
-# проверка связности двух узлов
+
 def has_path(graph, start, end, visited):
+    # проверка связности двух узлов
     if start == end:
         return True
     visited[start] = True
     for neighbor in graph[start]:
         if not visited[neighbor]:
+
             if has_path(graph, neighbor, end, visited):
                 return True
     return False
-    
-# проверка связности каждого узла с каждым
+
+
 def full_connectivity(points, connections):
+    # проверка связности каждого узла с каждым
     graph = {}
     for point in points:
         graph[point] = []
@@ -31,8 +35,9 @@ def full_connectivity(points, connections):
                     break
     return possible_paths
 
-# случайная инициализация связей
+
 def init_random_connections(points):
+    # случайная инициализация связей
     connections = []
     while not full_connectivity(points, connections):
         f_point_index = random.randint(0, len(points) - 1)
@@ -49,8 +54,9 @@ def init_random_connections(points):
             connections = tmp_connections
     return connections
 
-# удаление одной случайной связи и добавление случайной новой при условии сохранения связности
+
 def iter_random_connections(points, connections):
+    # удаление одной случайной связи и добавление случайной новой при условии сохранения связности
     i = random.randint(0, len(connections) - 1)
     point1 = connections[i][0]
     point2 = connections[i][1]
@@ -76,14 +82,16 @@ def iter_random_connections(points, connections):
             break
     return tmp_connections
 
-# отобразить график
+
 def show_conncetions(connections):
+    # отобразить график
     plt.scatter(x, y)
     for i in connections:
         plt.plot([i[0][0], i[1][0]], [i[0][1], i[1][1]])
 
-# метрика, длина всех проводов
+
 def len_of_wire(connections):
+    # метрика, длина всех проводов
     len_ = 0
     for i in connections:
         len_ += ((i[1][0] - i[0][0])**2 + (i[1][1] - i[0][1])**2) ** 0.5
@@ -115,7 +123,8 @@ show_conncetions(current_connections)
 
 # алгоритм имитации отжига
 while current_temp > final_temp:
-    print('Текущая температура:', str(round(current_temp, 2)).rjust(6), end='\b'*28, flush=True)
+    print('Текущая температура:', str(
+        round(current_temp, 2)).rjust(6), end='\b'*28, flush=True)
     new_connections = iter_random_connections(points, current_connections)
     delta = len_of_wire(new_connections) - len_of_wire(current_connections)
     if delta <= 0:

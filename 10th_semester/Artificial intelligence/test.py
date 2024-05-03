@@ -2,6 +2,47 @@ import random, math
 import matplotlib.pyplot as plt
 
 
+def has_path(graph, start, end, visited):
+    # проверка связности двух узлов
+    if start == end:
+        return True
+    visited[start] = True
+    for neighbor in graph[start]:
+        if not visited[neighbor]:
+
+            if has_path(graph, neighbor, end, visited):
+                return True
+    return False
+
+
+def mutate(points, connections):
+    # удаление одной случайной связи и добавление случайной новой при условии сохранения связности
+    i = random.randint(0, len(connections) - 1)
+    point1 = connections[i][0]
+    point2 = connections[i][1]
+    tmp_connections = connections.copy()
+    tmp_connections.remove(connections[i])
+    while True:
+        f_point_index = random.randint(0, len(points) - 1)
+        s_point_index = f_point_index
+        while s_point_index == f_point_index:
+            s_point_index = random.randint(0, len(points) - 1)
+        f_point = points[f_point_index]
+        s_point = points[s_point_index]
+        graph = {}
+        for point in points:
+            graph[point] = []
+        for connection in tmp_connections + [(f_point, s_point)]:
+            a, b = connection
+            graph[a].append(b)
+            graph[b].append(a)
+        visited = {point: False for point in points}
+        if has_path(graph, point1, point2, visited):
+            tmp_connections.append((f_point, s_point))
+            break
+    return tmp_connections
+
+
 def check_connectivity(points, connections):
     graph = {}
     for p1, p2 in connections:
@@ -85,53 +126,39 @@ def connections_decoding(points, code):
     return connections
 
 
-# на выходе не всегда решение, мб накрутить проверок
+# скрещивание
 def crossing(code1, code2):
-    #code3, code4 = '', ''
-    #while code3.count('1') != code1.count('1') and code4.count('1') != code2.count('1'):1
-    # for _ in range(100):
     i = random.randint(0, len(code1))
     code3, code4 = code1[:i] + code2[i:], code2[:i] + code1[i:]
     if check_connectivity(points, connections_decoding(points, code3)) and check_connectivity(points, connections_decoding(points, code4)):
         return code3, code4
     return code1, code2
-    #     if check_connectivity(points, connections_decoding(points, code3)) and check_connectivity(points, connections_decoding(points, code4)):
-    #         break
-    #     else:
-    #         code3, code4 = None, None
-    # if code3 and code4:
-    #     return code3, code4
-    # else:
-    #     return code1, code2
-    
+
 
 # инициализация параметров алгоритма
 population_size = 2**10
-# number_of_genes
-# individual
+probability_of_mutation = 0.1
 probability_of_crossing = 0.5
 
 # инициализация расположения оборудования и первая итерация соединения
 num_of_routers = 16
 size_of_map = 30
-x = [random.randint(1, size_of_map) for _ in range(num_of_routers)]
-y = [random.randint(1, size_of_map) for _ in range(num_of_routers)]
-points = [(i, j) for i, j in zip(x, y)]
+points = [(random.randint(1, size_of_map), random.randint(1, size_of_map)) for _ in range(num_of_routers)]
 while len(list(set(points))) != num_of_routers:
     points = list(set(points))
     points.append((random.randint(1, size_of_map), random.randint(1, size_of_map)))
+x = [point[0] for point in points]
+y = [point[1] for point in points]
 
 # отображение расположения оборудования
-plt.figure(figsize=(15, 5))
+plt.figure(figsize=(5, 5))
 plt.subplot(1, 3, 1)
 plt.scatter(x, y)
 
 # формирование начальной популяции
 population = [init_random_connections(points) for _ in range(population_size)]
-result_pre = sorted(population, key=lambda x: len_of_wire(x))[0]
 
-# while len(population) > 2:
-for _i in range(1000):
+for _i in range(100):
     print(_i)
     # оценка каждой особи популяции
     population_grades = [len_of_wire(i) for i in population]
@@ -157,16 +184,19 @@ for _i in range(1000):
         else:
             crossed_population.append(selected_population[i])
             crossed_population.append(selected_population[i + 1])
+    
+    population = crossed_population + selected_population
 
-    population = selected_population * 2
-    random.shuffle(population)
+    # мутации
+    for i in range(len(selected_population)):
+        if random.random() < probability_of_mutation:
+            population[i] = mutate(points, population[i])
 
-result = sorted(population, key=lambda x: len_of_wire(x))[0]
+    # отрисовка лучшего результата в текущей популяции
+    best_result = sorted(population, key=lambda x: len_of_wire(x))[0]
+    plt.clf()
+    show_conncetions(best_result)
+    plt.draw()
+    plt.pause(0.01)
 
-# отображение первого потомка
-plt.subplot(1, 3, 2)
-show_conncetions(result_pre)
-plt.subplot(1, 3, 3)
-show_conncetions(result)
-print(len_of_wire(result_pre), len_of_wire(result))
 plt.show()
